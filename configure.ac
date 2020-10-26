@@ -587,6 +587,7 @@ AH_BOTTOM([
 ])
 
 
+AM_MAINTAINER_MODE
 AC_ARG_VAR(SYSROOT,[locate config scripts also below that directory])
 
 # Checks for programs.
