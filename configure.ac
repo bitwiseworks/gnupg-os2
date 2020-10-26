@@ -657,6 +657,7 @@ require_iconv=yes
 have_dosish_system=no
 have_w32_system=no
 have_w32ce_system=no
+have_os2_system=no
 have_android_system=no
 use_simple_gettext=no
 use_ldapwrapper=yes
@@ -692,11 +693,8 @@ case "${host}" in
         ;;
     i?86-emx-os2 | i?86-*-os2*emx )
         # OS/2 with the EMX environment
-        ac_cv_have_dev_random=no
         AC_DEFINE(HAVE_DRIVE_LETTERS)
-        have_dosish_system=yes
-        try_gettext="no"
-        build_wks_tools=no
+        have_os2_system=yes
         ;;
 
     i?86-*-msdosdjgpp*)
@@ -773,8 +771,12 @@ if test "$have_w32_system" = yes; then
       AC_DEFINE(HAVE_W32CE_SYSTEM,1,[Defined if we run on WindowsCE])
    fi
 fi
+if test "$have_os2_system" = yes; then
+   AC_DEFINE(HAVE_OS2_SYSTEM,1, [Defined if we run on a OS/2 API based system])
+fi
 AM_CONDITIONAL(HAVE_W32_SYSTEM, test "$have_w32_system" = yes)
 AM_CONDITIONAL(HAVE_W32CE_SYSTEM, test "$have_w32ce_system" = yes)
+AM_CONDITIONAL(HAVE_OS2_SYSTEM, test "$have_os2_system" = yes)
 
 if test "$have_android_system" = yes; then
    AC_DEFINE(HAVE_ANDROID_SYSTEM,1, [Defined if we build for an Android system])
@@ -857,7 +859,7 @@ if test x"$LIBUSB_NAME" != x ; then
                   have_libusb=yes ])
    AC_MSG_CHECKING([libusb include dir])
    usb_incdir_found="no"
-   for _incdir in "" "/usr/include/libusb-1.0" \
+   for _incdir in "" "/@unixroot/usr/include/libusb-1.0" \
        "/usr/local/include/libusb-1.0" "/usr/pkg/include/libusb-1.0"; do
      _libusb_save_cppflags=$CPPFLAGS
      if test -n "${_incdir}"; then
@@ -1286,7 +1288,7 @@ fi
 #
 AC_MSG_NOTICE([checking for gettext])
 AM_PO_SUBDIRS
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.19])
 if test "$try_gettext" = yes; then
   AM_GNU_GETTEXT([external],[need-ngettext])
 
