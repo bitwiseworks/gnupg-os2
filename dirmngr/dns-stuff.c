@@ -50,7 +50,9 @@
 #endif
 #include <string.h>
 #include <unistd.h>
-
+#ifdef HAVE_OS2_SYSTEM
+#include <libcx/net.h>
+#endif
 
 /* William Ahern's DNS library, included as a source copy.  */
 #ifdef USE_LIBDNS
@@ -1125,6 +1127,7 @@ resolve_addr_libdns (const struct sockaddr_storage *addr, int addrlen,
 
   /* First we turn ADDR into a DNS name (with ".arpa" suffix).  */
   err = 0;
+#ifndef HAVE_OS2_SYSTEM
   if (addr->ss_family == AF_INET6)
     {
       const struct sockaddr_in6 *a6 = (const struct sockaddr_in6 *)addr;
@@ -1132,6 +1135,9 @@ resolve_addr_libdns (const struct sockaddr_storage *addr, int addrlen,
         err = gpg_error (GPG_ERR_INV_OBJ);
     }
   else if (addr->ss_family == AF_INET)
+#else
+  if (addr->ss_family == AF_INET)
+#endif
     {
       const struct sockaddr_in *a4 = (const struct sockaddr_in *)addr;
       if (!dns_a_arpa (host, sizeof host, (void*)&a4->sin_addr))

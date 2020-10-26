@@ -548,6 +548,7 @@ DNS_PUBLIC size_t dns_a_arpa(void *, size_t, const struct dns_a *);
  * AAAA  R E S O U R C E  R E C O R D
  */
 
+#ifndef HAVE_OS2_SYSTEM
 struct dns_aaaa {
 	struct in6_addr addr;
 }; /* struct dns_aaaa */
@@ -561,6 +562,7 @@ DNS_PUBLIC int dns_aaaa_cmp(const struct dns_aaaa *, const struct dns_aaaa *);
 DNS_PUBLIC size_t dns_aaaa_print(void *, size_t, struct dns_aaaa *);
 
 DNS_PUBLIC size_t dns_aaaa_arpa(void *, size_t, const struct dns_aaaa *);
+#endif
 
 
 /*
@@ -784,7 +786,9 @@ DNS_PUBLIC size_t dns_txt_print(void *, size_t, struct dns_txt *);
 
 union dns_any {
 	struct dns_a a;
+#ifndef HAVE_OS2_SYSTEM
 	struct dns_aaaa aaaa;
+#endif
 	struct dns_mx mx;
 	struct dns_ns ns;
 	struct dns_cname cname;

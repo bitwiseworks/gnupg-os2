@@ -76,6 +76,9 @@ typedef int socket_fd_t;
 #include <arpa/inet.h>		/* inet_pton(3) inet_ntop(3) htons(3) ntohs(3) */
 #include <netdb.h>		/* struct addrinfo */
 #endif
+#ifdef HAVE_OS2_SYSTEM
+#include <libcx/net.h>
+#endif
 
 #include "gpgrt.h"   /* For GGPRT_GCC_VERSION */
 #include "dns.h"
@@ -802,7 +805,9 @@ DNS_NOTUSED static size_t dns_strnlcpy(char *dst, size_t lim, const char *src, s
 
 static size_t dns_af_len(int af) {
 	static const size_t table[AF_MAX]	= {
+#ifndef HAVE_OS2_SYSTEM
 		[AF_INET6]	= sizeof (struct sockaddr_in6),
+#endif
 		[AF_INET]	= sizeof (struct sockaddr_in),
 #if DNS_HAVE_SOCKADDR_UN
 		[AF_UNIX]	= sizeof (struct sockaddr_un),
@@ -822,8 +827,10 @@ static unsigned short dns_sa_noport;
 
 static unsigned short *dns_sa_port(int af, void *sa) {
 	switch (af) {
+#ifndef HAVE_OS2_SYSTEM
 	case AF_INET6:
 		return &((struct sockaddr_in6 *)sa)->sin6_port;
+#endif
 	case AF_INET:
 		return &((struct sockaddr_in *)sa)->sin_port;
 	default:
@@ -834,6 +841,7 @@ static unsigned short *dns_sa_port(int af, void *sa) {
 
 static void *dns_sa_addr(int af, const void *sa, socklen_t *size) {
 	switch (af) {
+#ifndef HAVE_OS2_SYSTEM
 	case AF_INET6: {
 		struct in6_addr *in6 = &((struct sockaddr_in6 *)sa)->sin6_addr;
 
@@ -842,6 +850,7 @@ static void *dns_sa_addr(int af, const void *sa, socklen_t *size) {
 
 		return in6;
 	}
+#endif
 	case AF_INET: {
 		struct in_addr *in = &((struct sockaddr_in *)sa)->sin_addr;
 
@@ -907,6 +916,7 @@ static int dns_sa_cmp(void *a, void *b) {
 
 		return 0;
 	}
+#ifndef HAVE_OS2_SYSTEM
 	case AF_INET6: {
 		struct in6_addr *a6, *b6;
 		size_t i;
@@ -925,6 +935,7 @@ static int dns_sa_cmp(void *a, void *b) {
 
 		return 0;
 	}
+#endif
 #if DNS_HAVE_SOCKADDR_UN
 	case AF_UNIX: {
 		char a_path[DNS_SUNPATHMAX + 1], b_path[sizeof a_path];
@@ -1188,7 +1199,7 @@ static size_t dns_recv(int fd, void *dst, size_t lim, int flags, dns_error_t *er
 } /* dns_recv() */
 
 static size_t dns_send_nopipe(int fd, const void *src, size_t len, int flags, dns_error_t *_error) {
-#if _WIN32 || !defined SIGPIPE || defined SO_NOSIGPIPE
+#if _WIN32 || !defined SIGPIPE || defined SO_NOSIGPIPE || HAVE_OS2_SYSTEM
 	return dns_send(fd, src, len, flags, _error);
 #elif defined MSG_NOSIGNAL
 	return dns_send(fd, src, len, (flags|MSG_NOSIGNAL), _error);
@@ -3386,6 +3397,7 @@ size_t dns_a_print(void *dst, size_t lim, struct dns_a *a) {
 } /* dns_a_print() */
 
 
+#ifndef HAVE_OS2_SYSTEM
 int dns_aaaa_parse(struct dns_aaaa *aaaa, struct dns_rr *rr, struct dns_packet *P) {
 	if (rr->rd.len != sizeof aaaa->addr.s6_addr)
 		return DNS_EILLEGAL;
@@ -3453,6 +3465,7 @@ size_t dns_aaaa_print(void *dst, size_t lim, struct dns_aaaa *aaaa) {
 
 	return dns_strlcpy(dst, addr, lim);
 } /* dns_aaaa_print() */
+#endif
 
 
 int dns_mx_parse(struct dns_mx *mx, struct dns_rr *rr, struct dns_packet *P) {
@@ -4015,8 +4028,10 @@ int dns_ptr_push(struct dns_packet *P, struct dns_ptr *ptr) {
 
 size_t dns_ptr_qname(void *dst, size_t lim, int af, void *addr) {
 	switch (af) {
+#ifndef HAVE_OS2_SYSTEM
 	case AF_INET6:
 		return dns_aaaa_arpa(dst, lim, addr);
+#endif
 	case AF_INET:
 		return dns_a_arpa(dst, lim, addr);
 	default: {
@@ -4295,7 +4310,9 @@ static const struct dns_rrtype {
 	size_t (*cname)();
 } dns_rrtypes[]	= {
 	{ DNS_T_A,      "A",      0,                 &dns_a_parse,      &dns_a_push,      &dns_a_cmp,      &dns_a_print,      0,                },
+#ifndef HAVE_OS2_SYSTEM
 	{ DNS_T_AAAA,   "AAAA",   0,                 &dns_aaaa_parse,   &dns_aaaa_push,   &dns_aaaa_cmp,   &dns_aaaa_print,   0,                },
+#endif
 	{ DNS_T_MX,     "MX",     0,                 &dns_mx_parse,     &dns_mx_push,     &dns_mx_cmp,     &dns_mx_print,     &dns_mx_cname,    },
 	{ DNS_T_NS,     "NS",     0,                 &dns_ns_parse,     &dns_ns_push,     &dns_ns_cmp,     &dns_ns_print,     &dns_ns_cname,    },
 	{ DNS_T_CNAME,  "CNAME",  0,                 &dns_cname_parse,  &dns_cname_push,  &dns_cname_cmp,  &dns_cname_print,  &dns_cname_cname, },
@@ -4828,7 +4845,11 @@ static dns_error_t dns_trace_dump_addr(struct dns_trace *trace, const char *pref
 	int error;
 
 	if ((addr = dns_sa_addr(ss->ss_family, (struct sockaddr *)ss, NULL))) {
+#ifndef HAVE_OS2_SYSTEM
 		char ip[INET6_ADDRSTRLEN + 1];
+#else
+		char ip[INET_ADDRSTRLEN + 1];
+#endif
 
 		if ((error = dns_ntop(ss->ss_family, addr, ip, sizeof ip)))
 			return error;
@@ -5039,7 +5060,9 @@ struct dns_hosts {
 
 		union {
 			struct in_addr a4;
+#ifndef HAVE_OS2_SYSTEM
 			struct in6_addr a6;
+#endif
 		} addr;
 
 		_Bool alias;
@@ -5133,7 +5156,11 @@ error:
 
 int dns_hosts_loadfile(struct dns_hosts *hosts, FILE *fp) {
 	struct dns_hosts_entry ent;
+#ifndef HAVE_OS2_SYSTEM
 	char word[DNS_PP_MAX(INET6_ADDRSTRLEN, DNS_D_MAXNAME) + 1];
+#else
+	char word[DNS_PP_MAX(INET_ADDRSTRLEN, DNS_D_MAXNAME) + 1];
+#endif
 	unsigned wp, wc, skip;
 	int ch, error;
 
@@ -5210,7 +5237,11 @@ int dns_hosts_loadpath(struct dns_hosts *hosts, const char *path) {
 
 int dns_hosts_dump(struct dns_hosts *hosts, FILE *fp) {
 	struct dns_hosts_entry *ent, *xnt;
+#ifndef HAVE_OS2_SYSTEM
 	char addr[INET6_ADDRSTRLEN + 1];
+#else
+	char addr[INET_ADDRSTRLEN + 1];
+#endif
 	unsigned i;
 
 	for (ent = hosts->head; ent; ent = xnt) {
@@ -5243,12 +5274,14 @@ int dns_hosts_insert(struct dns_hosts *hosts, int af, const void *addr, const vo
 	dns_d_anchor(ent->host, sizeof ent->host, host, strlen(host));
 
 	switch ((ent->af = af)) {
+#ifndef HAVE_OS2_SYSTEM
 	case AF_INET6:
 		memcpy(&ent->addr.a6, addr, sizeof ent->addr.a6);
 
 		dns_aaaa_arpa(ent->arpa, sizeof ent->arpa, addr);
 
 		break;
+#endif
 	case AF_INET:
 		memcpy(&ent->addr.a4, addr, sizeof ent->addr.a4);
 
@@ -5309,10 +5342,12 @@ struct dns_packet *dns_hosts_query(struct dns_hosts *hosts, struct dns_packet *Q
 		}
 
 		break;
+#ifndef HAVE_OS2_SYSTEM
 	case DNS_T_AAAA:
 		af	= AF_INET6;
 
 		goto loop;
+#endif
 	case DNS_T_A:
 		af	= AF_INET;
 
@@ -6396,7 +6431,11 @@ int dns_resconf_dump(struct dns_resolv_conf *resconf, FILE *fp) {
 	int af;
 
 	for (i = 0; i < lengthof(resconf->nameserver) && (af = resconf->nameserver[i].ss_family) != AF_UNSPEC; i++) {
+#ifndef HAVE_OS2_SYSTEM
 		char addr[INET6_ADDRSTRLEN + 1]	= "[INVALID]";
+#else
+		char addr[INET_ADDRSTRLEN + 1]	= "[INVALID]";
+#endif
 		unsigned short port;
 
 		dns_inet_ntop(af, dns_sa_addr(af, &resconf->nameserver[i], NULL), addr, sizeof addr);
@@ -6465,7 +6504,11 @@ int dns_resconf_dump(struct dns_resolv_conf *resconf, FILE *fp) {
 
 
 	if ((af = resconf->iface.ss_family) != AF_UNSPEC) {
+#ifndef HAVE_OS2_SYSTEM
 		char addr[INET6_ADDRSTRLEN + 1]	= "[INVALID]";
+#else
+		char addr[INET_ADDRSTRLEN + 1]	= "[INVALID]";
+#endif
 
 		dns_inet_ntop(af, dns_sa_addr(af, &resconf->iface, NULL), addr, sizeof addr);
 
@@ -6594,32 +6637,58 @@ error:
 struct dns_hints *dns_hints_root(struct dns_resolv_conf *resconf, int *error_) {
 	static const struct {
 		int af;
+#ifndef HAVE_OS2_SYSTEM
 		char addr[INET6_ADDRSTRLEN];
+#else
+		char addr[INET_ADDRSTRLEN];
+#endif
 	} root_hints[] = {
 		{ AF_INET,	"198.41.0.4"		},	/* A.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:503:ba3e::2:30"	},	/* A.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"192.228.79.201"	},	/* B.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:500:84::b"	},	/* B.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"192.33.4.12"		},	/* C.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:500:2::c"		},	/* C.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"199.7.91.13"		},	/* D.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:500:2d::d"	},	/* D.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"192.203.230.10"	},	/* E.ROOT-SERVERS.NET. */
 		{ AF_INET,	"192.5.5.241"		},	/* F.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:500:2f::f"	},	/* F.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"192.112.36.4"		},	/* G.ROOT-SERVERS.NET. */
 		{ AF_INET,	"128.63.2.53"		},	/* H.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:500:1::803f:235"	},	/* H.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"192.36.148.17"		},	/* I.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:7FE::53"		},	/* I.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"192.58.128.30"		},	/* J.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:503:c27::2:30"	},	/* J.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"193.0.14.129"		},	/* K.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:7FD::1"		},	/* K.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"199.7.83.42"		},	/* L.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:500:3::42"	},	/* L.ROOT-SERVERS.NET. */
+#endif
 		{ AF_INET,	"202.12.27.33"		},	/* M.ROOT-SERVERS.NET. */
+#ifndef HAVE_OS2_SYSTEM
 		{ AF_INET6,	"2001:DC3::35"		},	/* M.ROOT-SERVERS.NET. */
+#endif
 	};
 	struct dns_hints *hints		= 0;
 	struct sockaddr_storage ss;
@@ -6928,7 +6997,11 @@ static unsigned short dns_hints_port(struct dns_hints *hints, int af, void *addr
 
 int dns_hints_dump(struct dns_hints *hints, FILE *fp) {
 	struct dns_hints_soa *soa;
+#ifndef HAVE_OS2_SYSTEM
 	char addr[INET6_ADDRSTRLEN];
+#else
+	char addr[INET_ADDRSTRLEN];
+#endif
 	unsigned i;
 	int af, error;
 
@@ -7863,6 +7936,7 @@ retry:
 		buffer[0] = 5; /* VER  */
 		buffer[1] = 1; /* CMD = CONNECT  */
 		buffer[2] = 0; /* RSV  */
+#ifndef HAVE_OS2_SYSTEM
 		if (so->remote.ss_family == AF_INET6) {
 			struct sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *)&so->remote;
 
@@ -7870,6 +7944,9 @@ retry:
 			memcpy (buffer+ 4, &addr_in6->sin6_addr.s6_addr, 16); /* DST.ADDR */
 			memcpy (buffer+20, &addr_in6->sin6_port, 2);          /* DST.PORT */
 		} else {
+#else
+		{
+#endif
 			struct sockaddr_in *addr_in = (struct sockaddr_in *)&so->remote;
 
 			buffer[3] = 1; /* ATYP = IPv4 */
@@ -8943,6 +9020,7 @@ exec:
 		/* XXX: Should we copy F->answer to R->nodata? */
 
 		dgoto(R->sp, DNS_R_FOREACH_A);
+#ifndef HAVE_OS2_SYSTEM
 	case DNS_R_FOREACH_AAAA: {
 		struct dns_aaaa aaaa;
 		struct sockaddr_in6 sin6;
@@ -9079,6 +9157,7 @@ exec:
 		/* XXX: Should we copy F->answer to R->nodata? */
 
 		dgoto(R->sp, DNS_R_FOREACH_AAAA);
+#endif
 	case DNS_R_CNAME0_A:
 		if (&F[1] >= endof(R->stack))
 			dgoto(R->sp, DNS_R_FINISH);
@@ -9654,9 +9733,11 @@ struct dns_addrinfo *dns_ai_open(const char *host, const char *serv, enum dns_ty
 	case DNS_T_A:
 		ai->af.todo = DNS_AI_AF2INDEX(AF_INET);
 		break;
+#ifndef HAVE_OS2_SYSTEM
 	case DNS_T_AAAA:
 		ai->af.todo = DNS_AI_AF2INDEX(AF_INET6);
 		break;
+#endif
 	default: /* 0, MX, SRV, etc */
 		switch (ai->hints.ai_family) {
 		case AF_UNSPEC:
@@ -9665,9 +9746,11 @@ struct dns_addrinfo *dns_ai_open(const char *host, const char *serv, enum dns_ty
 		case AF_INET:
 			ai->af.todo = DNS_AI_AF2INDEX(AF_INET);
 			break;
+#ifndef HAVE_OS2_SYSTEM
 		case AF_INET6:
 			ai->af.todo = DNS_AI_AF2INDEX(AF_INET6);
 			break;
+#endif
 		default:
 			break;
 		}
@@ -9704,7 +9787,9 @@ void dns_ai_close(struct dns_addrinfo *ai) {
 static int dns_ai_setent(struct addrinfo **ent, union dns_any *any, enum dns_type type, struct dns_addrinfo *ai) {
 	union u {
 		struct sockaddr_in sin;
+#ifndef HAVE_OS2_SYSTEM
 		struct sockaddr_in6 sin6;
+#endif
 		struct sockaddr_storage ss;
 	} addr;
 	const char *cname;
@@ -9720,6 +9805,7 @@ static int dns_ai_setent(struct addrinfo **ent, union dns_any *any, enum dns_typ
 		memcpy(&addr.sin.sin_addr, any, sizeof addr.sin.sin_addr);
 
 		break;
+#ifndef HAVE_OS2_SYSTEM
 	case DNS_T_AAAA:
 		memset(&addr.sin6, '\0', sizeof addr.sin6);
 
@@ -9729,6 +9815,7 @@ static int dns_ai_setent(struct addrinfo **ent, union dns_any *any, enum dns_typ
 		memcpy(&addr.sin6.sin6_addr, any, sizeof addr.sin6.sin6_addr);
 
 		break;
+#endif
 	default:
 		return EINVAL;
 	} /* switch() */
@@ -9811,6 +9898,7 @@ exec:
 			}
 		}
 
+#ifndef HAVE_OS2_SYSTEM
 		if (1 == dns_inet_pton(AF_INET6, ai->qname, &any.aaaa)) {
 			if (ai->af.atype == AF_INET6) {
 				ai->state = DNS_AI_S_NEXTAF;
@@ -9819,6 +9907,7 @@ exec:
 				dns_ai_goto(DNS_AI_S_NEXTAF);
 			}
 		}
+#endif
 
 		if (ai->hints.ai_flags & AI_NUMERICHOST)
 			dns_ai_goto(DNS_AI_S_NEXTAF);
@@ -10012,7 +10101,11 @@ int dns_ai_poll(struct dns_addrinfo *ai, int timeout) {
 
 size_t dns_ai_print(void *_dst, size_t lim, struct addrinfo *ent, struct dns_addrinfo *ai) {
 	struct dns_buf dst = DNS_B_INTO(_dst, lim);
+#ifndef HAVE_OS2_SYSTEM
 	char addr[DNS_PP_MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN) + 1];
+#else
+	char addr[DNS_PP_MAX(INET_ADDRSTRLEN, INET_ADDRSTRLEN) + 1];
+#endif
 	char __dst[DNS_STRMAXLEN + 1] = { 0 };
 
 	dns_b_puts(&dst, "[ ");
@@ -10034,9 +10127,11 @@ size_t dns_ai_print(void *_dst, size_t lim, struct addrinfo *ent, struct dns_add
 	case AF_INET:
 		dns_b_puts(&dst, "AF_INET");
 		break;
+#ifndef HAVE_OS2_SYSTEM
 	case AF_INET6:
 		dns_b_puts(&dst, "AF_INET6");
 		break;
+#endif
 	default:
 		dns_b_fmtju(&dst, ent->ai_family, 0);
 		break;

@@ -2697,6 +2697,7 @@ use_socks (struct sockaddr_storage *addr)
 
   if (assuan_sock_get_flag (ASSUAN_INVALID_FD, "tor-mode", &mode) || !mode)
     return 0;  /* Not in Tor mode.  */
+#ifndef HAVE_OS2_SYSTEM
   else if (addr->ss_family == AF_INET6)
     {
       struct sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *)addr;
@@ -2712,6 +2713,7 @@ use_socks (struct sockaddr_storage *addr)
 
       return 0; /* This is the loopback address.  */
     }
+#endif
   else if (addr->ss_family == AF_INET)
     {
       struct sockaddr_in *addr_in = (struct sockaddr_in *)addr;
