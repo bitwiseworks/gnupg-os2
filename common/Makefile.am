@@ -92,7 +92,6 @@ common_sources = \
 	agent-opt.c \
 	helpfile.c \
 	mkdir_p.c mkdir_p.h \
-	strlist.c strlist.h \
 	exectool.c exectool.h \
 	server-help.c server-help.h \
 	name-value.c name-value.h \
