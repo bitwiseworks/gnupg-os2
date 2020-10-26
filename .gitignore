@@ -164,7 +164,8 @@ x.parm
 /swdb.lst.sig
 
 # ignore regenerated files
-INSTALL
+ABOUT-NLS*
+INSTALL*
 build-aux/compile
 build-aux/config.guess
 build-aux/config.rpath*
@@ -174,14 +175,6 @@ build-aux/install-sh
 build-aux/missing
 build-aux/mkinstalldirs
 build-aux/texinfo.tex
-m4/iconv.m4*
-m4/intdiv0.m4*
-m4/intl.m4*
-m4/intlmacosx.m4
-m4/lock.m4*
-m4/longlong.m4
-m4/printf-posix.m4*
-m4/size_max.m4*
-m4/uintmax_t.m4*
-m4/wint_t.m4*
 po/Makefile.in.in*
+m4/*~
+po/*~
