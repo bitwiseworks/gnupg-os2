@@ -106,7 +106,7 @@ man_MANS = $(myman_pages) gnupg.7
 watchgnupg_SOURCE = gnupg.texi
 
 
-CLEANFILES = yat2m mkdefsinc defs.inc
+CLEANFILES = yat2m$(EXEEXT) mkdefsinc$(EXEEXT) defs.inc
 
 DISTCLEANFILES = gnupg.tmp gnupg.ops yat2m-stamp.tmp yat2m-stamp \
                  gnupg-card-architecture.eps \
@@ -120,11 +120,11 @@ else
 YAT2M_CMD = ./yat2m
 YAT2M_DEP = yat2m
 
-yat2m: yat2m.c
+yat2m$(EXEEXT): yat2m.c
 	$(CC_FOR_BUILD) -o $@ $(srcdir)/yat2m.c
 endif
 
-mkdefsinc: mkdefsinc.c Makefile ../config.h
+mkdefsinc$(EXEEXT): mkdefsinc.c Makefile ../config.h
 	$(CC_FOR_BUILD) -I. -I.. -I$(srcdir) $(AM_CPPFLAGS) \
                         -o $@ $(srcdir)/mkdefsinc.c
 
@@ -186,7 +186,7 @@ defsincdate: $(gnupg_TEXINFOS)
 	   echo "$SOURCE_DATE_EPOCH" >>defsincdate ; \
 	fi
 
-defs.inc : defsincdate Makefile mkdefsinc
+defs.inc : defsincdate Makefile mkdefsinc$(EXEEXT)
 	incd="`test -f defsincdate || echo '$(srcdir)/'`defsincdate"; \
 	./mkdefsinc -C $(srcdir) --date "`cat $$incd 2>/dev/null`" \
 	    $(gnupg_TEXINFOS) >$@

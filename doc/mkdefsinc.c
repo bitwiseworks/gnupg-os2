@@ -322,6 +322,16 @@ main (int argc, char **argv)
 
   p = xstrdup (GNUPG_SYSCONFDIR);
   pend = strrchr (p, '/');
+#ifdef HAVE_OS2_SYSTEM
+  if (pend)
+      *pend = 0;
+  char *p1;
+  n = strlen(p) + 7 + strlen(PACKAGE_NAME) + 1;
+  p1 = xmalloc(n);
+  snprintf(p1, n, "%s/%s", p, "skel/." PACKAGE_NAME);
+  print_filename ("@set SYSCONFSKELDIR ", p1);
+  xfree(p1);
+#else
   fputs ("@set SYSCONFSKELDIR ", stdout);
   if (pend)
     {
@@ -329,6 +339,7 @@ main (int argc, char **argv)
       fputs (p, stdout);
     }
   fputs ("/skel/." PACKAGE_NAME "\n", stdout);
+#endif
   xfree (p);
 
   fputs ("\n@c Version information a la version.texi\n\n", stdout);
