@@ -47,7 +47,7 @@
 #include "stringhelp.h"
 #include "utf8conv.h"
 #include "mischelp.h"
-
+#include "sysutils.h"
 
 void
 wipememory (void *ptr, size_t len)
