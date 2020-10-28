@@ -774,7 +774,11 @@ main (int argc, char **argv )
          write. */
       if (allow_coredump)
         {
+#ifdef HAVE_OS2_SYSTEM
+          if (chdir("/@unixroot/var/tmp"))
+#else
           if (chdir("/tmp"))
+#endif
             log_debug ("chdir to '/tmp' failed: %s\n", strerror (errno));
           else
             log_debug ("changed working directory to '/tmp'\n");

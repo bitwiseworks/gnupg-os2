@@ -319,7 +319,11 @@ confucius_mktmpdir (void)
 
   p = getenv ("TMPDIR");
   if (!p || !*p)
+#ifdef HAVE_OS2_SYSTEM
+    p = "/@unixroot/var/tmp";
+#else
     p = "/tmp";
+#endif
   if (p[strlen (p) - 1] == '/')
     name = xstrconcat (p, "gpg-XXXXXX", NULL);
   else

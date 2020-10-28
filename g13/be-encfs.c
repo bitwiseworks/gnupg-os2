@@ -410,7 +410,11 @@ be_encfs_create_container (ctrl_t ctrl, const char *fname, tupledesc_t tuples,
   if (err)
     goto leave;
 
+#ifdef HAVE_OS2_SYSTEM
+  mountpoint = xtrystrdup ("/@unixroot/var/tmp/.#g13_XXXXXX");
+#else
   mountpoint = xtrystrdup ("/tmp/.#g13_XXXXXX");
+#endif
   if (!mountpoint)
     {
       err = gpg_error_from_syserror ();

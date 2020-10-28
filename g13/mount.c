@@ -82,7 +82,11 @@ g13_mount_container (ctrl_t ctrl, const char *filename, const char *mountpoint)
 
   if (!mountpoint)
     {
+#ifdef HAVE_OS2_SYSTEM
+      mountpoint_buffer = xtrystrdup ("/@unixroot/var/tmp/g13-XXXXXX");
+#else
       mountpoint_buffer = xtrystrdup ("/tmp/g13-XXXXXX");
+#endif
       if (!mountpoint_buffer)
         return gpg_error_from_syserror ();
       if (!gnupg_mkdtemp (mountpoint_buffer))

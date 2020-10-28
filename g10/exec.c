@@ -241,6 +241,8 @@ make_tempdir(struct exec_info *info)
 #ifdef __riscos__
 	      tmp="<Wimp$ScrapDir>.GnuPG";
 	      mkdir(tmp,0700); /* Error checks occur later on */
+#elif HAVE_OS2_SYSTEM
+	      tmp="/@unixroot/var/tmp";
 #else
 	      tmp="/tmp";
 #endif

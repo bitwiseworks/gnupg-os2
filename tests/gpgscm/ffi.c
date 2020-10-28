@@ -354,6 +354,8 @@ do_get_temp_path (scheme *sc, pointer args)
   if (GetTempPath (MAX_PATH+1, buffer) == 0)
     FFI_RETURN_STRING (sc, "/temp");
   FFI_RETURN_STRING (sc, buffer);
+#elif HAVE_OS2_SYSTEM
+  FFI_RETURN_STRING (sc, "/@unixroot/var/tmp");
 #else
   FFI_RETURN_STRING (sc, "/tmp");
 #endif
