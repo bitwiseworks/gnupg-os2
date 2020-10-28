@@ -136,8 +136,13 @@ start_syshelp (ctrl_t ctrl, assuan_context_t *r_ctx)
     argv[2] = "gnupg-g13-syshelp";
     argv[3] = NULL;
 
+#ifdef HAVE_OS2_SYSTEM
+    err = assuan_pipe_connect (ctx, "/@unixroot/usr/bin/userv", argv,
+                               no_close_list, NULL, NULL, 0);
+#else
     err = assuan_pipe_connect (ctx, "/usr/bin/userv", argv,
                                no_close_list, NULL, NULL, 0);
+#endif
   }
   if (err)
     {

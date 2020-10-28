@@ -705,7 +705,11 @@ sh_dmcrypt_mount_container (ctrl_t ctrl, const char *devname,
       argv[2] = NULL;
       log_debug ("now running \"mount %s %s\"\n",
                  targetname_abs, ctrl->devti->mountpoint);
+#ifdef HAVE_OS2_SYSTEM
+      err = gnupg_exec_tool ("/@unixroot/usr/bin/mount", argv, NULL, &result, NULL);
+#else
       err = gnupg_exec_tool ("/bin/mount", argv, NULL, &result, NULL);
+#endif
       if (err)
         {
           log_error ("error running mount: %s\n", gpg_strerror (err));
@@ -772,7 +776,11 @@ sh_dmcrypt_umount_container (ctrl_t ctrl, const char *devname)
     argv[0] = targetname_abs;
     argv[1] = NULL;
     log_debug ("now running \"umount %s\"\n", targetname_abs);
+#ifdef HAVE_OS2_SYSTEM
+    err = gnupg_exec_tool ("/@unixroot/usr/bin/umount", argv, NULL, &result, NULL);
+#else
     err = gnupg_exec_tool ("/bin/umount", argv, NULL, &result, NULL);
+#endif
   }
   if (err)
     {
@@ -785,7 +793,11 @@ sh_dmcrypt_umount_container (ctrl_t ctrl, const char *devname)
           argv[0] = "-mv";
           argv[1] = targetname_abs;
           argv[2] = NULL;
+#ifdef HAVE_OS2_SYSTEM
+          gnupg_exec_tool ("/@unixroot/usr/bin/fuser", argv, NULL, &result, NULL);
+#else
           gnupg_exec_tool ("/bin/fuser", argv, NULL, &result, NULL);
+#endif
         }
       goto leave;
     }

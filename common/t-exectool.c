@@ -40,7 +40,11 @@ test_executing_true (void)
 {
   gpg_error_t err;
   const char *pgmname     = "/bin/true";
+#ifdef HAVE_OS2_SYSTEM
+  const char *alt_pgmname = "/@unixroot/usr/bin/true.exe";
+#else
   const char *alt_pgmname = "/usr/bin/true";
+#endif
   const char *argv[]     = { NULL, NULL };
   char *result;
   size_t len;
@@ -73,7 +77,11 @@ test_executing_false (void)
 {
   gpg_error_t err;
   const char *pgmname     = "/bin/false";
+#ifdef HAVE_OS2_SYSTEM
+  const char *alt_pgmname = "/@unixroot/usr/bin/false.exe";
+#else
   const char *alt_pgmname = "/usr/bin/false";
+#endif
   const char *argv[]     = { NULL, NULL };
   char *result;
   size_t len;
@@ -101,7 +109,11 @@ static void
 test_executing_cat (const char *vector)
 {
   gpg_error_t err;
+#ifdef HAVE_OS2_SYSTEM
+  const char *argv[] = { "/@unixroot/usr/bin/cat.exe", NULL };
+#else
   const char *argv[] = { "/bin/cat", NULL };
+#endif
   char *result;
   size_t len;
 
@@ -135,7 +147,11 @@ static void
 test_catting_cat (void)
 {
   gpg_error_t err;
+#ifdef HAVE_OS2_SYSTEM
+  const char *argv[] = { "/@unixroot/usr/bin/cat.exe", "/@unixroot/usr/bin/cat.exe", NULL };
+#else
   const char *argv[] = { "/bin/cat", "/bin/cat", NULL };
+#endif
   char *result;
   size_t len;
   estream_t in;

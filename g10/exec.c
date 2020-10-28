@@ -447,7 +447,11 @@ exec_write(struct exec_info **info,const char *program,
 	  char *shell=getenv("SHELL");
 
 	  if(shell==NULL)
+#ifdef HAVE_OS2_SYSTEM
+	    shell="sh";
+#else
 	    shell="/bin/sh";
+#endif
 
 	  /* I'm the child */
 
