@@ -51,7 +51,11 @@ cmp_time_s (struct tm *a, struct tm *b)
       || a->tm_sec  != b->tm_sec
       || a->tm_wday != b->tm_wday
       || a->tm_yday != b->tm_yday
+#ifndef __OS2__
       || !a->tm_isdst != !b->tm_isdst)
+#else
+      )
+#endif
     return -1;
   return 0;
 }
