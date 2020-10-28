@@ -468,7 +468,7 @@ AH_BOTTOM([
 /* Now to separate file name parts.
    Please note that the string version must not contain more
    than one character because the code assumes strlen()==1 */
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 #define DIRSEP_C '\\'
 #define DIRSEP_S "\\"
 #define EXTSEP_C '.'
