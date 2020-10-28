@@ -116,7 +116,11 @@
 #define DEFAULT_TIMEOUT 30
 
 
+#ifdef HAVE_OS2_SYSTEM
+#define RESOLV_CONF_NAME xtryasprintf ("%s\\RESOLV2", getenv ("ETC"))
+#else
 #define RESOLV_CONF_NAME "/etc/resolv.conf"
+#endif
 
 /* Two flags to enable verbose and debug mode.  */
 static int opt_verbose;
@@ -601,9 +605,14 @@ libdns_init (void)
     }
 
   {
-#if HAVE_W32_SYSTEM
+#if defined(HAVE_W32_SYSTEM) || defined(HAVE_OS2_SYSTEM)
+#ifdef HAVE_OS2_SYSTEM
+    char *hosts_path = xtryasprintf ("%s\\hosts",
+                                     getenv ("ETC"));
+#else
     char *hosts_path = xtryasprintf ("%s\\System32\\drivers\\etc\\hosts",
                                      getenv ("SystemRoot"));
+#endif
     if (! hosts_path)
       {
         err = gpg_error_from_syserror ();

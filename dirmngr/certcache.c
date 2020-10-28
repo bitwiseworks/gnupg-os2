@@ -674,11 +674,19 @@ load_certs_from_system (void)
 #ifdef DEFAULT_TRUST_STORE_FILE
     { DEFAULT_TRUST_STORE_FILE }
 #else
+#ifdef HAVE_OS2_SYSTEM
+    { "/@unixroot/etc/ssl/ca-bundle.pem" },
+    { "/@unixroot/etc/ssl/certs/ca-certificates.crt" },
+    { "/@unixroot/etc/pki/tls/cert.pem" },
+    { "/@unixroot/usr/local/share/certs/ca-root-nss.crt" },
+    { "/@unixroot/etc/ssl/cert.pem" }
+#else
     { "/etc/ssl/ca-bundle.pem" },
     { "/etc/ssl/certs/ca-certificates.crt" },
     { "/etc/pki/tls/cert.pem" },
     { "/usr/local/share/certs/ca-root-nss.crt" },
     { "/etc/ssl/cert.pem" }
+#endif
 #endif /*!DEFAULT_TRUST_STORE_FILE*/
   };
   int idx;
