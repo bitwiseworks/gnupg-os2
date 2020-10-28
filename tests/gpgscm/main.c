@@ -128,7 +128,7 @@ my_strusage( int level )
 static int
 path_absolute_p (const char *p)
 {
-#if _WIN32
+#if defined(_WIN32) || defined(__OS2__)
   return ((strlen (p) > 2 && p[1] == ':' && (p[2] == '\\' || p[2] == '/'))
           || p[0] == '\\' || p[0] == '/');
 #else
@@ -255,7 +255,7 @@ main (int argc, char **argv)
   ARGPARSE_ARGS pargs;
   scheme *sc;
   char *p;
-#if _WIN32
+#if defined(_WIN32) || defined(__OS2__)
   char pathsep = ';';
 #else
   char pathsep = ':';

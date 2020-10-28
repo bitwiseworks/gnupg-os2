@@ -1428,14 +1428,14 @@ ffi_init (scheme *sc, const char *argv0, const char *scriptname,
     }
   ffi_define (sc, "*args*", args);
 
-#if _WIN32
+#if defined(_WIN32) || defined(__OS2__)
   ffi_define (sc, "*pathsep*", sc->vptr->mk_character (sc, ';'));
 #else
   ffi_define (sc, "*pathsep*", sc->vptr->mk_character (sc, ':'));
 #endif
 
   ffi_define (sc, "*win32*",
-#if _WIN32
+#if defined(_WIN32) || defined(__OS2__)
               sc->T
 #else
               sc->F
