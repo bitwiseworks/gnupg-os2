@@ -165,7 +165,11 @@ test_catting_cat (void)
       return;
     }
 
+#ifdef HAVE_OS2_SYSTEM
+  in = es_fopen (argv[1], "rb");
+#else
   in = es_fopen (argv[1], "r");
+#endif
   if (in == NULL)
     {
       fprintf (stderr, "skipping test: could not open %s: %s\n",
