@@ -64,7 +64,7 @@
 #include "../common/shareddefs.h"
 #include "../common/compliance.h"
 
-#if defined(HAVE_DOSISH_SYSTEM) || defined(__CYGWIN__)
+#if defined(HAVE_DOSISH_SYSTEM) || defined(__CYGWIN__) || defined(HAVE_OS2_SYSTEM)
 #define MY_O_BINARY  O_BINARY
 #ifndef S_IRGRP
 # define S_IRGRP 0

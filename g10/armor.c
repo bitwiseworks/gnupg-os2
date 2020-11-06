@@ -1176,7 +1176,7 @@ armor_filter( void *opaque, int control,
 
 	    if ( afx->hdrlines ) {
                 for ( s = afx->hdrlines; *s; s++ ) {
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
                     if ( *s == '\n' )
                         iobuf_put( a, '\r');
 #endif
@@ -1235,7 +1235,7 @@ armor_filter( void *opaque, int control,
 	   didn't specify. */
 	if(afx->eol[0]==0)
 	  {
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 	    afx->eol[0]='\r';
 	    afx->eol[1]='\n';
 #else

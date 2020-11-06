@@ -43,7 +43,7 @@
 #include "ksba-io-support.h"
 
 
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   #define LF "\r\n"
 #else
   #define LF "\n"

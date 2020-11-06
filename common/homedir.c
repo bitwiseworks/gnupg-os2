@@ -184,7 +184,7 @@ copy_dir_with_fixup (const char *newdir)
   if (!*newdir)
     return NULL;
 
-#ifdef HAVE_W32_SYSTEM
+#if defined(HAVE_W32_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   if (newdir[0] && newdir[1] == ':'
       && !(newdir[2] == '/' || newdir[2] == '\\'))
     {
@@ -565,13 +565,17 @@ gnupg_daemon_rootdir (void)
 char *
 _gnupg_socketdir_internal (int skip_checks, unsigned *r_info)
 {
-#if defined(HAVE_W32_SYSTEM) || !defined(HAVE_STAT)
+#if defined(HAVE_W32_SYSTEM) || !defined(HAVE_STAT) || defined(HAVE_OS2_SYSTEM)
 
   char *name;
 
   (void)skip_checks;
   *r_info = 0;
+#ifdef HAVE_OS2_SYSTEM
+  name = xstrdup ("\\socket");
+#else
   name = xstrdup (gnupg_homedir ());
+#endif
 
 #else /* Unix and stat(2) available. */
 

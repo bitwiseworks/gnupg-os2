@@ -180,7 +180,7 @@ static int filter_flush (iobuf_t a);
 static int
 fd_cache_strcmp (const char *a, const char *b)
 {
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   for (; *a && *b; a++, b++)
     {
       if (*a != *b && !((*a == '/' && *b == '\\')

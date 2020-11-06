@@ -317,7 +317,7 @@ maybe_create_keyring_or_box (char *filename, int is_box, int force_create)
      tricky auto-creation which is anyway only done for certain home
      directory name pattern. */
   last_slash_in_filename = strrchr (filename, DIRSEP_C);
-#if HAVE_W32_SYSTEM
+#if HAVE_W32_SYSTEM || HAVE_OS2_SYSTEM
   {
     /* Windows may either have a slash or a backslash.  Take care of it.  */
     char *p = strrchr (filename, '/');
@@ -678,14 +678,14 @@ keydb_add_resource (const char *url, unsigned int flags)
 #endif /* !HAVE_DRIVE_LETTERS && !__riscos__ */
 
   if (*resname != DIRSEP_C
-#ifdef HAVE_W32_SYSTEM
+#if defined(HAVE_W32_SYSTEM) || defined(HAVE_OS2_SYSTEM)
       && *resname != '/'  /* Fixme: does not handle drive letters.  */
 #endif
         )
     {
       /* Do tilde expansion etc. */
       if (strchr (resname, DIRSEP_C)
-#ifdef HAVE_W32_SYSTEM
+#if defined(HAVE_W32_SYSTEM) || defined(HAVE_OS2_SYSTEM)
           || strchr (resname, '/')  /* Windows also accepts this.  */
 #endif
           )

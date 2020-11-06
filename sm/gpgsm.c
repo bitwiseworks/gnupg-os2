@@ -44,7 +44,9 @@
 #include "../common/asshelp.h"
 #include "../common/init.h"
 #include "../common/compliance.h"
-
+#ifdef HAVE_OS2_SYSTEM
+#include <io.h>
+#endif
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -647,7 +649,7 @@ build_list (const char *text, const char * (*mapf)(int), int (*chkf)(int))
 static void
 set_binary (FILE *fp)
 {
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   setmode (fileno (fp), O_BINARY);
 #else
   (void)fp;

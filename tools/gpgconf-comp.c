@@ -2062,7 +2062,7 @@ get_config_filename (gc_component_t component, gc_backend_t backend)
 
 #if HAVE_W32CE_SYSTEM
   if (!(filename[0] == '/' || filename[0] == '\\'))
-#elif defined(HAVE_DOSISH_SYSTEM)
+#elif defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   if (!(filename[0]
         && filename[1] == ':'
         && (filename[2] == '/' || filename[2] == '\\')) /* x:\ or x:/ */

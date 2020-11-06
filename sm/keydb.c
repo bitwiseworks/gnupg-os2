@@ -138,7 +138,7 @@ maybe_create_keybox (char *filename, int force, int *r_created)
      tricky auto-creation which is anyway only done for some home
      directory name patterns. */
   last_slash_in_filename = strrchr (filename, DIRSEP_C);
-#if HAVE_W32_SYSTEM
+#if HAVE_W32_SYSTEM || HAVE_OS2_SYSTEM
   {
     /* Windows may either have a slash or a backslash.  Take care of it.  */
     char *p = strrchr (filename, '/');

@@ -171,7 +171,7 @@ extract (estream_t stream, const char *dirname, tarinfo_t info,
   size_t n;
 
   n = strlen (hdr->name);
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   if (strchr (hdr->name, '\\'))
     {
       log_error ("filename '%s' contains a backslash - "

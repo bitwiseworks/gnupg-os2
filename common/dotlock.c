@@ -660,7 +660,11 @@ dotlock_create_unix (dotlock_t h, const char *file_to_lock)
   else
     nodename = utsbuf.nodename;
 
+#ifdef HAVE_OS2_SYSTEM
+  if ( !(dirpart = strrchr (file_to_lock, DIRSEP_C)) && !(dirpart = strrchr (file_to_lock, '/')))
+#else
   if ( !(dirpart = strrchr (file_to_lock, DIRSEP_C)) )
+#endif
     {
       dirpart = EXTSEP_S;
       dirpartlen = 1;

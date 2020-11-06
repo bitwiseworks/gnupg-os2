@@ -462,7 +462,7 @@ pattern_valid_p (const char *pattern)
   if (*pattern == '.' && pattern[1] == '.')
     return 0;
   if (*pattern == '/'
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
       || *pattern == '\\'
 #endif
       )

@@ -346,7 +346,7 @@ make_basename(const char *filepath, const char *inputpath)
     (void)inputpath; /* Only required for riscos.  */
 
     if ( !(p=strrchr(filepath, '/')) )
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 	if ( !(p=strrchr(filepath, '\\')) )
 #endif
 #ifdef HAVE_DRIVE_LETTERS
@@ -375,7 +375,7 @@ make_dirname(const char *filepath)
     char *p;
 
     if ( !(p=strrchr(filepath, '/')) )
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 	if ( !(p=strrchr(filepath, '\\')) )
 #endif
 #ifdef HAVE_DRIVE_LETTERS
@@ -672,7 +672,7 @@ make_absfilename_try (const char *first_part, ... )
 int
 compare_filenames (const char *a, const char *b)
 {
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   for ( ; *a && *b; a++, b++ )
     {
       if (*a != *b
