@@ -265,7 +265,11 @@ fun_writer (void *cookie_arg, const void *buffer, size_t size)
                   strcat (srvr_addr_un.sun_path, "/S.log");
                   srvr_addr_un.sun_path[sizeof (srvr_addr_un.sun_path)-1] = 0;
                   srvr_addr = (struct sockaddr *)&srvr_addr_un;
+#ifdef __OS2__
+                  addrlen = sizeof(struct sockaddr_un);
+#else
                   addrlen = SUN_LEN (&srvr_addr_un);
+#endif
                   name_for_err = srvr_addr_un.sun_path;
                 }
             }
@@ -277,7 +281,11 @@ fun_writer (void *cookie_arg, const void *buffer, size_t size)
                            name, sizeof (srvr_addr_un.sun_path)-1);
                   srvr_addr_un.sun_path[sizeof (srvr_addr_un.sun_path)-1] = 0;
                   srvr_addr = (struct sockaddr *)&srvr_addr_un;
+#ifdef __OS2__
+                  addrlen = sizeof(struct sockaddr_un);
+#else
                   addrlen = SUN_LEN (&srvr_addr_un);
+#endif
                 }
             }
 #endif /*!HAVE_W32SYSTEM*/

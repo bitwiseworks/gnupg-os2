@@ -86,7 +86,11 @@ create_server_socket (const char *filename, int *new_sock)
   name.sun_family = AF_LOCAL;
   strncpy (name.sun_path, filename, sizeof (name.sun_path));
   name.sun_path[sizeof (name.sun_path) - 1] = '\0';
+#ifdef __OS2__
+  size = sizeof(struct sockaddr_un);
+#else
   size = SUN_LEN (&name);
+#endif
 
   remove (filename);
 
@@ -132,7 +136,11 @@ connect_to_socket (const char *filename, int *new_sock)
   srvr_addr.sun_family = AF_LOCAL;
   strncpy (srvr_addr.sun_path, filename, sizeof (srvr_addr.sun_path) - 1);
   srvr_addr.sun_path[sizeof (srvr_addr.sun_path) - 1] = 0;
+#ifdef __OS2__
+  len = sizeof(struct sockaddr_un);
+#else
   len = SUN_LEN (&srvr_addr);
+#endif
 
   ret = connect (sock, (struct sockaddr *) &srvr_addr, len);
   if (ret == -1)

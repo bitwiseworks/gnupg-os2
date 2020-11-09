@@ -413,7 +413,11 @@ main (int argc, char **argv)
       strncpy (srvr_addr_un.sun_path, *argv, sizeof (srvr_addr_un.sun_path)-1);
       srvr_addr_un.sun_path[sizeof (srvr_addr_un.sun_path) - 1] = 0;
       addr_un = (struct sockaddr *)&srvr_addr_un;
+#ifdef __OS2__
+      addrlen_un = sizeof(struct sockaddr_un);
+#else
       addrlen_un = SUN_LEN (&srvr_addr_un);
+#endif
     }
   else
     addrlen_un = 0;  /* Silent gcc.  */

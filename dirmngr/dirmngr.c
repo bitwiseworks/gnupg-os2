@@ -1251,7 +1251,11 @@ main (int argc, char **argv)
           }
       }
 
+#ifdef __OS2__
+      len = sizeof(struct sockaddr_un);
+#else
       len = SUN_LEN (&serv_addr);
+#endif
 
       rc = assuan_sock_bind (fd, (struct sockaddr*) &serv_addr, len);
       if (rc == -1
@@ -1278,9 +1282,11 @@ main (int argc, char **argv)
         }
       cleanup_socket = 1;
 
+#ifndef __OS2__ // no file on os/2
       if (gnupg_chmod (serv_addr.sun_path, "-rwx"))
         log_error (_("can't set permissions of '%s': %s\n"),
                    serv_addr.sun_path, strerror (errno));
+#endif
 
       if (listen (FD2INT (fd), listen_backlog) == -1)
         {

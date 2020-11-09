@@ -1146,7 +1146,11 @@ create_server_socket (const char *name, char **r_redir_name,
       }
   }
 
+#ifdef __OS2__
+  len = sizeof(struct sockaddr_un);
+#else
   len = SUN_LEN (unaddr);
+#endif
 
   rc = assuan_sock_bind (fd, addr, len);
   if (rc == -1 && errno == EADDRINUSE)
@@ -1166,9 +1170,11 @@ create_server_socket (const char *name, char **r_redir_name,
       scd_exit (2);
     }
 
+#ifndef __OS2__ // no file on os/2
   if (gnupg_chmod (unaddr->sun_path, "-rwx"))
     log_error (_("can't set permissions of '%s': %s\n"),
                unaddr->sun_path, strerror (errno));
+#endif
 
   if (listen (FD2INT(fd), listen_backlog) == -1)
     {
