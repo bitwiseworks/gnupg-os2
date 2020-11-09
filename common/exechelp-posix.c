@@ -75,6 +75,9 @@
 #include "sysutils.h"
 #include "exechelp.h"
 
+#ifdef HAVE_OS2_SYSTEM
+#define pipe(A) socketpair(AF_UNIX, SOCK_STREAM, 0, A)
+#endif
 
 /* Helper */
 static inline gpg_error_t
