@@ -1380,11 +1380,13 @@ main (int argc, char **argv)
                 }
             }
 
+#ifndef __OS2__ //setsid is a non working stub
           if (setsid() == -1)
             {
               log_error ("setsid() failed: %s\n", strerror(errno) );
               dirmngr_exit (1);
             }
+#endif
 
           log_get_prefix (&oldflags);
           log_set_prefix (NULL, oldflags | GPGRT_LOG_RUN_DETACHED);
