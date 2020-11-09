@@ -858,8 +858,10 @@ gnupg_spawn_process_detached (const char *pgmname, const char *argv[],
       pid_t pid2;
 
       gcry_control (GCRYCTL_TERM_SECMEM);
+#ifndef __OS2__
       if (setsid() == -1 || chdir ("/"))
         _exit (1);
+#endif
 
       pid2 = fork (); /* Double fork to let init take over the new child. */
       if (pid2 == (pid_t)(-1))
