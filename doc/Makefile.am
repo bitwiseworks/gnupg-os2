@@ -132,10 +132,18 @@ mkdefsinc$(EXEEXT): mkdefsinc.c Makefile ../config.h
 	convert `test -f '$<' || echo '$(srcdir)/'`$< $@
 
 .svg.png:
-	#convert `test -f '$<' || echo '$(srcdir)/'`$< $@
+if HAVE_OS2_SYSTEM
+	test -f '$<' || echo '$(srcdir)/'$< $@
+else
+	convert `test -f '$<' || echo '$(srcdir)/'`$< $@
+endif
 
 .svg.pdf:
-	#convert `test -f '$<' || echo '$(srcdir)/'`$< $@
+if HAVE_OS2_SYSTEM
+	test -f '$<' || echo '$(srcdir)/'$< $@
+else
+	convert `test -f '$<' || echo '$(srcdir)/'`$< $@
+endif
 
 .fig.png:
 	fig2dev -L png `test -f '$<' || echo '$(srcdir)/'`$< $@
