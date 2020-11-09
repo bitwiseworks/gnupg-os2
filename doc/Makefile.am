@@ -132,10 +132,10 @@ mkdefsinc$(EXEEXT): mkdefsinc.c Makefile ../config.h
 	convert `test -f '$<' || echo '$(srcdir)/'`$< $@
 
 .svg.png:
-	convert `test -f '$<' || echo '$(srcdir)/'`$< $@
+	#convert `test -f '$<' || echo '$(srcdir)/'`$< $@
 
 .svg.pdf:
-	convert `test -f '$<' || echo '$(srcdir)/'`$< $@
+	#convert `test -f '$<' || echo '$(srcdir)/'`$< $@
 
 .fig.png:
 	fig2dev -L png `test -f '$<' || echo '$(srcdir)/'`$< $@
