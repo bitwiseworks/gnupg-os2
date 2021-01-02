@@ -4849,7 +4849,7 @@ main (int argc, char **argv)
 		size_t n = !endless && count < 99? count : 99;
 
 		p = gcry_random_bytes (n, level);
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 		setmode ( fileno(stdout), O_BINARY );
 #endif
                 if (opt.armor) {

@@ -43,7 +43,7 @@
 #include "../common/mbox-util.h"
 #include "../common/compliance.h"
 
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 #define LF "\r\n"
 #else
 #define LF "\n"

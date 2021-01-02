@@ -32,7 +32,7 @@
 #ifdef HAVE_LANGINFO_CODESET
 # include <langinfo.h>
 #endif
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 # include <fcntl.h> /* for setmode() */
 #endif
 #include <sys/stat.h>
@@ -210,7 +210,7 @@ main (int argc, char **argv )
   if (opt.checkonly)
     return 0;
 
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   setmode (fileno (stdin) , O_BINARY );
 #endif
   process (stdin, patternarray);
@@ -236,7 +236,7 @@ read_file (const char *fname, size_t *r_length)
       size_t nread, bufsize = 0;
 
       fp = stdin;
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
       setmode ( fileno(fp) , O_BINARY );
 #endif
       buf = NULL;

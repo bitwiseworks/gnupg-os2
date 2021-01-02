@@ -300,7 +300,7 @@ handle_plaintext (PKT_plaintext * pt, md_filter_context_t * mfx,
 		}
 	      if (mfx->md)
 		gcry_md_putc (mfx->md, c);
-#ifndef HAVE_DOSISH_SYSTEM
+#if !defined(HAVE_DOSISH_SYSTEM) && !defined(HAVE_OS2_SYSTEM)
               /* Convert to native line ending. */
               /* fixme: this hack might be too simple */
 	      if (c == '\r' && convert != 'm')
@@ -377,7 +377,7 @@ handle_plaintext (PKT_plaintext * pt, md_filter_context_t * mfx,
 	    {
 	      if (mfx->md)
 		gcry_md_putc (mfx->md, c);
-#ifndef HAVE_DOSISH_SYSTEM
+#if !defined(HAVE_DOSISH_SYSTEM) && !defined(HAVE_OS2_SYSTEM)
 	      if (c == '\r' && convert != 'm')
 		continue;	/* fixme: this hack might be too simple */
 #endif

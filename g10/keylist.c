@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 # include <fcntl.h>		/* for setmode() */
 #endif
 
@@ -2158,7 +2158,7 @@ set_attrib_fd (int fd)
   if (! gnupg_fd_valid (fd))
     log_fatal ("attribute-fd is invalid: %s\n", strerror (errno));
 
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   setmode (fd, O_BINARY);
 #endif
   if (fd == 1)

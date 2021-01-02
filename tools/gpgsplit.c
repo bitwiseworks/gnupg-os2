@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <sys/types.h>
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
 # include <fcntl.h> /* for setmode() */
 #endif
 #ifdef HAVE_ZIP
@@ -113,7 +113,7 @@ main (int argc, char **argv)
 {
   ARGPARSE_ARGS pargs;
 
-#ifdef HAVE_DOSISH_SYSTEM
+#if defined(HAVE_DOSISH_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   setmode( fileno(stdin), O_BINARY );
   setmode( fileno(stdout), O_BINARY );
 #endif
