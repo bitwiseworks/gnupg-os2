@@ -52,6 +52,10 @@
 #include "../common/sysutils.h"
 #include "exec.h"
 
+#ifdef HAVE_OS2_SYSTEM
+#define pipe(A) socketpair(AF_UNIX, SOCK_STREAM, 0, A)
+#endif
+
 #ifdef NO_EXEC
 int
 exec_write(struct exec_info **info,const char *program,
