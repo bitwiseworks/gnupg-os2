@@ -178,3 +178,4 @@ build-aux/texinfo.tex
 po/Makefile.in.in*
 m4/*~
 po/*~
+po/*.gmo
