@@ -699,7 +699,7 @@ tdbio_set_dbname (ctrl_t ctrl, const char *new_dbname,
    * acquiring the lock, which assumes the existence of the directory.
    */
   p = strrchr (fname, DIRSEP_C);
-#if HAVE_W32_SYSTEM
+#if defined(HAVE_W32_SYSTEM) || defined(HAVE_OS2_SYSTEM)
   {
     /* Windows may either have a slash or a backslash.  Take
        care of it.  */
